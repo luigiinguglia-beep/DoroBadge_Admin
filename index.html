@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoroBadge</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 0;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 24px;
+    }
+
+    .brand {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .brand-login {
+      margin-bottom: 18px;
+    }
+    .brand-app {
+      margin-bottom: 24px;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto;
+      width: 240px;
+      height: 120px;
+      object-fit: contain;
+    }
+    .brand h1,
+    .brand h2 {
+      margin: 0;
+      width: 100%;
+      text-align: center;
+    }
+    .title-login {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+    .title-app {
+      font-size: 42px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      margin-top: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-entrata {
+      background: #2563eb;
+    }
+    .btn-entrata:hover {
+      background: #1d4ed8;
+    }
+    .btn-uscita {
+      background: #059669;
+    }
+    .btn-uscita:hover {
+      background: #047857;
+    }
+    .btn-entrata-qr {
+      background: #7c3aed;
+    }
+    .btn-entrata-qr:hover {
+      background: #6d28d9;
+    }
+    .btn-uscita-qr {
+      background: #ea580c;
+    }
+    .btn-uscita-qr:hover {
+      background: #c2410c;
+    }
+    .btn-logout {
+      background: #dc2626;
+      margin-top: 40px;
+    }
+    .btn-logout:hover {
+      background: #b91c1c;
+    }
+
+    <!--i button di sotto non funzionano ma li lascio per tenere conto di quanto fatto-->
+    button:hover {
+      background: #1d4ed8;
+    }
+    button.secondary {
+      background: #059669;
+    }
+    button.secondary:hover {
+      background: #047857;
+    }
+    button.logout {
+      background: #dc2626;
+    }
+    button.logout:hover {
+      background: #b91c1c;
+    }
+    button.utility {
+      background: #6b7280;
+    }
+    button.utility:hover {
+      background: #4b5563;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      white-space: pre-line;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .user-box {
+      background: #f3f4f6;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    #reader {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    #qrSection {
+      margin-top: 20px;
+    }
+
+    .show-password-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .show-password-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: normal;
+      white-space: nowrap;
+    }
+    .show-password-label input[type="checkbox"] {
+      margin: 0;
+      width: auto;
+      flex: 0 0 auto;
+    }
+
+    .note-box {
+      margin-top: 20px;
+    }
+    .note-box label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    }
+    .note-box textarea {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-size: 15px;
+      font-family: Arial, sans-serif;
+      resize: vertical;
+    }
+
+  </style>
+
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#007bff">
+
+</head>
+<body>
+  <div class="container">
+    <div id="loginView">
+      <div class="brand brand-login">
+        <img src="DoroMaris_logo.png" alt="Logo azienda" class="logo">
+        <h1 class="title-login">DoroBadge</h1>
+      </div>
+
+      <div class="subtitle">Accesso collaboratori</div>
+
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Inserisci username">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Inserisci password">
+      <div class="show-password-row">
+        <label class="show-password-label">
+          <input type="checkbox" onchange="togglePasswordCheckbox(this)">
+          <span>Mostra password</span>
+        </label>
+      </div>
+
+      <button onclick="login()">Accedi</button>
+
+      <div id="loginMessage" class="message hidden"></div>
+    </div>
+
+    <div id="appView" class="hidden">
+      <div class="brand brand-app">
+        <img src="DoroMaris_logo.png" alt="Logo azienda" class="logo">
+        <h2 class="title-app">DoroBadge</h2>
+      </div>
+
+      <div class="user-box" id="userBox"></div>
+
+      <button class="badge-action btn-entrata" onclick="timbratura('ENTRATA')">Timbra Entrata</button>
+      <button class="badge-action btn-uscita" onclick="timbratura('USCITA')">Timbra Uscita</button>
+      <button class="badge-action btn-entrata-qr" onclick="timbraturaConQr('ENTRATA')">Timbra Entrata con QR</button>
+      <button class="badge-action btn-uscita-qr" onclick="timbraturaConQr('USCITA')">Timbra Uscita con QR</button>
+      <div class="note-box">
+        <label for="segnalazione">Segnalazioni</label>
+        <textarea id="segnalazione" placeholder="Scrivi qui eventuali note o segnalazioni."></textarea>
+      </div>
+      <button class="btn-logout" onclick="logout()">Esci</button>
+      
+
+      <div id="appMessage" class="message hidden"></div>
+
+      <div id="qrSection" class="hidden">
+        <div id="reader"></div>
+        <button id="stopQrButton" class="logout hidden" onclick="stopQrScanner()">Annulla scansione QR</button>
+      </div>
+
+      <!--<div class="small">
+        La posizione GPS e' obbligatoria per ogni timbratura.
+      </div>-->
+    </div>
+  </div>
+
+  <script>
+    console.log("Html5Qrcode:", typeof Html5Qrcode);
+
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxIyR2ZeeTVnMwLvZ2_pZv7Mac7geHUTNTIfC-tHOyfnm4HMt2EmO2WztZdhT99oCJQcg/exec";
+
+    let currentUser = null;
+    let currentQrScanner = null;
+    let pendingBadgeData = null;
+
+    function setButtonsDisabled(disabled) {
+      const buttons = document.querySelectorAll('.badge-action');
+      buttons.forEach(button => {
+        button.disabled = disabled;
+        button.style.opacity = disabled ? '0.6' : '1';
+        button.style.cursor = disabled ? 'not-allowed' : 'pointer';
+      });
+    }
+
+    function showMessage(elementId, text, type) {
+      const el = document.getElementById(elementId);
+      el.className = `message ${type}`;
+      el.textContent = text;
+    }
+
+    function hideMessage(elementId) {
+      const el = document.getElementById(elementId);
+      el.className = 'message hidden';
+      el.textContent = '';
+    }
+
+    function togglePasswordCheckbox(checkbox) {
+      const passwordInput = document.getElementById('password');
+      passwordInput.type = checkbox.checked ? 'text' : 'password';
+    }
+
+    function getSessionToken() {
+      return localStorage.getItem('dorobadgeSessionToken') || '';
+    }
+
+    function getSegnalazione() {
+      const el = document.getElementById('segnalazione');
+      return el ? el.value.trim() : '';
+    }
+    function clearSegnalazione() {
+      const el = document.getElementById('segnalazione');
+      if (el) {
+        el.value = '';
+      }
+    }
+    
+    function login() {
+      hideMessage('loginMessage');
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        showMessage('loginMessage', 'Inserisci username e password.', 'error');
+        return;
+      }
+
+      showMessage('loginMessage', 'Accesso in corso...', 'info');
+
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'login',
+          username: username,
+          password: password
+        })
+      })
+      .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error('Risposta server non valida: ' + text);
+        }
+      })
+      .then(data => {
+        if (data.success) {
+          currentUser = data.user;
+          localStorage.setItem('dorobadgeUser', JSON.stringify(currentUser));
+          localStorage.setItem('dorobadgeSessionToken', data.sessionToken);
+          showAppView();
+        } else {
+          showMessage('loginMessage', data.message || 'Login fallito.', 'error');
+        }
+      })
+      .catch(error => {
+        showMessage('loginMessage', 'Errore di collegamento al server.', 'error');
+        console.error('LOGIN ERROR:', error);
+      });
+    }
+
+    function showAppView() {
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('appView').classList.remove('hidden');
+
+      document.getElementById('userBox').innerHTML = `
+        <strong>Utente:</strong> ${currentUser.nomeCompleto}<br>
+        <strong>Username:</strong> ${currentUser.username}<br>
+        <strong>ID:</strong> ${currentUser.idUtente}
+      `;
+
+      hideMessage('appMessage');
+    }
+
+    function logout() {
+      currentUser = null;
+      pendingBadgeData = null;
+      localStorage.removeItem('dorobadgeUser');
+      localStorage.removeItem('dorobadgeSessionToken');
+      stopQrScannerSilently();
+
+      document.getElementById('appView').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      document.getElementById('password').value = '';
+
+      hideMessage('appMessage');
+      showMessage('loginMessage', 'Logout effettuato.', 'info');
+      setButtonsDisabled(false);
+    }
+
+    function forceLogoutWithMessage(message) {
+      currentUser = null;
+      pendingBadgeData = null;
+      localStorage.removeItem('dorobadgeUser');
+      localStorage.removeItem('dorobadgeSessionToken');
+      stopQrScannerSilently();
+      document.getElementById('appView').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      document.getElementById('password').value = '';
+      hideMessage('appMessage');
+      showMessage('loginMessage', message, 'error');
+      setButtonsDisabled(false);
+    }
+    
+    function timbratura(tipoTimbratura) {
+      hideMessage('appMessage');
+
+      if (!currentUser) {
+        showMessage('appMessage', 'Utente non autenticato.', 'error');
+        return;
+      }
+
+      setButtonsDisabled(true);
+
+      showMessage('appMessage', 'Acquisizione posizione GPS in corso...', 'info');
+
+      if (!navigator.geolocation) {
+        showMessage('appMessage', 'Geolocalizzazione non supportata dal dispositivo.', 'error');
+        setButtonsDisabled(false);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const latitudine = position.coords.latitude;
+          const longitudine = position.coords.longitude;
+          const accuratezza = position.coords.accuracy;
+          const dataOraClient = new Date().toISOString();
+          const userAgent = navigator.userAgent;
+
+          showMessage(
+            'appMessage',
+            `Posizione acquisita.\nLat: ${latitudine}\nLon: ${longitudine}\nAccuratezza: ${accuratezza} metri\nInvio timbratura ${tipoTimbratura} in corso...`,
+            'info'
+          );
+
+          fetch(BACKEND_URL, {
+            method: 'POST',
+            redirect: 'follow',
+            headers: {
+              'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({
+              action: 'saveBadge',
+              sessionToken: getSessionToken(),
+              tipoTimbratura: tipoTimbratura,
+              modalita: 'NORMALE',
+              qrRichiesto: 'NO',
+              qrLetto: '',
+              segnalazione: getSegnalazione(),
+              dataOraClient: dataOraClient,
+              latitudine: latitudine,
+              longitudine: longitudine,
+              accuratezza: accuratezza,
+              userAgent: userAgent
+            })
+          })
+          .then(async response => {
+            const text = await response.text();
+            console.log('RISPOSTA GREZZA SAVEBADGE:', text);
+
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              throw new Error('Risposta server non valida: ' + text);
+            }
+          })
+          .then(data => {
+            console.log('RISPOSTA JSON SAVEBADGE:', data);
+            if (data.success) {
+              clearSegnalazione();
+              showMessage(
+                'appMessage',
+                `Timbratura ${tipoTimbratura} salvata correttamente.\nLat: ${latitudine}\nLon: ${longitudine}\nAccuratezza: ${accuratezza} metri`,
+                'success'
+              );
+              setButtonsDisabled(false);
+              return;
+            }
+            if (
+              data.message === 'Sessione scaduta' ||
+              data.message === 'Sessione non valida' ||
+              data.message === 'Sessione mancante' ||
+              data.message === 'Sessione non attiva'
+            ) {
+              forceLogoutWithMessage('Sessione scaduta. Effettua di nuovo il login.');
+              return;
+            }
+            showMessage(
+              'appMessage',
+              `Timbratura non salvata.\nMessaggio server: ${data.message || 'Errore sconosciuto'}`,
+              'error'
+            );
+            setButtonsDisabled(false);
+          })
+
+          .catch(error => {
+            console.error('ERRORE SAVEBADGE:', error);
+            showMessage(
+              'appMessage',
+              `Errore di collegamento durante il salvataggio.\nDettaglio: ${error.message}`,
+              'error'
+            );
+            setButtonsDisabled(false);
+          });
+        },
+        function(error) {
+          console.error('ERRORE GPS:', error);
+
+          let msg = 'Impossibile ottenere la posizione GPS.';
+
+          if (error.code === 1) msg = 'Permesso posizione negato.';
+          if (error.code === 2) msg = 'Posizione non disponibile.';
+          if (error.code === 3) msg = 'Timeout nella lettura della posizione.';
+
+          showMessage('appMessage', msg, 'error');
+          setButtonsDisabled(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    function timbraturaConQr(tipoTimbratura) {
+      hideMessage('appMessage');
+
+      if (!currentUser) {
+        showMessage('appMessage', 'Utente non autenticato.', 'error');
+        return;
+      }
+
+      setButtonsDisabled(true);
+
+      showMessage('appMessage', 'Acquisizione posizione GPS in corso prima della scansione QR...', 'info');
+
+      if (!navigator.geolocation) {
+        showMessage('appMessage', 'Geolocalizzazione non supportata dal dispositivo.', 'error');
+        setButtonsDisabled(false);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const latitudine = position.coords.latitude;
+          const longitudine = position.coords.longitude;
+          const accuratezza = position.coords.accuracy;
+          const dataOraClient = new Date().toISOString();
+          const userAgent = navigator.userAgent;
+
+          pendingBadgeData = {
+            tipoTimbratura: tipoTimbratura,
+            modalita: 'QR',
+            qrRichiesto: 'SI',
+            segnalazione: getSegnalazione(),
+            dataOraClient: dataOraClient,
+            latitudine: latitudine,
+            longitudine: longitudine,
+            accuratezza: accuratezza,
+            userAgent: userAgent
+          };
+
+          showMessage(
+            'appMessage',
+            `Posizione acquisita.\nLat: ${latitudine}\nLon: ${longitudine}\nAccuratezza: ${accuratezza} metri\nAvvio fotocamera per scansione QR...`,
+            'info'
+          );
+
+          startQrScanner();
+        },
+        function(error) {
+          let msg = 'Impossibile ottenere la posizione GPS.';
+
+          if (error.code === 1) msg = 'Permesso posizione negato.';
+          if (error.code === 2) msg = 'Posizione non disponibile.';
+          if (error.code === 3) msg = 'Timeout nella lettura della posizione.';
+
+          showMessage('appMessage', msg, 'error');
+          setButtonsDisabled(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    async function startQrScanner() {
+      const qrSection = document.getElementById('qrSection');
+      const stopBtn = document.getElementById('stopQrButton');
+      const readerEl = document.getElementById('reader');
+
+      qrSection.classList.remove('hidden');
+      stopBtn.classList.remove('hidden');
+      readerEl.innerHTML = '';
+
+      if (typeof Html5Qrcode === 'undefined') {
+        showMessage('appMessage', 'Libreria QR non caricata.', 'error');
+        console.error('Html5Qrcode non definita');
+        setButtonsDisabled(false);
+        return;
+      }
+
+      try {
+        const cameras = await Html5Qrcode.getCameras();
+        console.log('CAMERE TROVATE:', cameras);
+
+        if (!cameras || cameras.length === 0) {
+          showMessage('appMessage', 'Nessuna fotocamera trovata sul dispositivo.', 'error');
+          setButtonsDisabled(false);
+          return;
+        }
+
+        if (currentQrScanner) {
+          try {
+            await currentQrScanner.stop();
+            await currentQrScanner.clear();
+          } catch (e) {
+            console.warn('Scanner precedente non pulito:', e);
+          }
+          currentQrScanner = null;
+        }
+
+        currentQrScanner = new Html5Qrcode("reader");
+
+        showMessage('appMessage', 'Avvio fotocamera per scansione QR...', 'info');
+
+        await currentQrScanner.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+          },
+          function(decodedText, decodedResult) {
+            handleQrRead(decodedText);
+          },
+          function(errorMessage) {
+          }
+        );
+
+        console.log('Scanner QR avviato correttamente');
+      } catch (err) {
+        console.error('ERRORE AVVIO QR:', err);
+
+        showMessage(
+          'appMessage',
+          `Impossibile avviare la fotocamera per il QR.\nDettaglio: ${err && err.message ? err.message : err}`,
+          'error'
+        );
+
+        await stopQrScannerSilently();
+        setButtonsDisabled(false);
+      }
+    }
+
+    async function stopQrScanner() {
+      await stopQrScannerSilently();
+      pendingBadgeData = null;
+      showMessage('appMessage', 'Scansione QR annullata.', 'info');
+      setButtonsDisabled(false);
+    }
+
+    async function stopQrScannerSilently() {
+      const qrSection = document.getElementById('qrSection');
+      const stopBtn = document.getElementById('stopQrButton');
+      const readerEl = document.getElementById('reader');
+
+      stopBtn.classList.add('hidden');
+
+      if (currentQrScanner) {
+        try {
+          await currentQrScanner.stop();
+        } catch (err) {
+          console.warn('Errore stop scanner:', err);
+        }
+
+        try {
+          await currentQrScanner.clear();
+        } catch (err) {
+          console.warn('Errore clear scanner:', err);
+        }
+
+        currentQrScanner = null;
+      }
+
+      qrSection.classList.add('hidden');
+      readerEl.innerHTML = '';
+    }
+
+    async function handleQrRead(qrText) {
+      showMessage('appMessage', `QR letto: ${qrText}\nVerifica in corso...`, 'info');
+
+      await stopQrScannerSilently();
+
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'checkQr',
+          codiceQr: qrText
+        })
+      })
+      .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error('Risposta server non valida: ' + text);
+        }
+      })
+      .then(data => {
+        if (!data.success || !data.qrValid) {
+          showMessage('appMessage', data.message || 'QR non valido.', 'error');
+          setButtonsDisabled(false);
+          pendingBadgeData = null;
+          return;
+        }
+
+        showMessage('appMessage', 'QR valido.\nSalvataggio timbratura in corso...', 'info');
+
+        saveBadgeWithQr(qrText);
+      })
+      .catch(error => {
+        console.error('ERRORE CHECK QR:', error);
+        showMessage('appMessage', `Errore verifica QR.\nDettaglio: ${error.message}`, 'error');
+        setButtonsDisabled(false);
+        pendingBadgeData = null;
+      });
+    }
+
+    function saveBadgeWithQr(qrText) {
+      if (!pendingBadgeData) {
+        showMessage('appMessage', 'Dati timbratura mancanti.', 'error');
+        setButtonsDisabled(false);
+        return;
+      }
+
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'saveBadge',
+          sessionToken: getSessionToken(),
+          tipoTimbratura: pendingBadgeData.tipoTimbratura,
+          modalita: 'QR',
+          qrRichiesto: 'SI',
+          qrLetto: qrText,
+          segnalazione: pendingBadgeData.segnalazione,
+          dataOraClient: pendingBadgeData.dataOraClient,
+          latitudine: pendingBadgeData.latitudine,
+          longitudine: pendingBadgeData.longitudine,
+          accuratezza: pendingBadgeData.accuratezza,
+          userAgent: pendingBadgeData.userAgent
+        })
+      })
+      .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error('Risposta server non valida: ' + text);
+        }
+      })
+      
+      .then(data => {
+        if (data.success) {
+          clearSegnalazione();
+          showMessage(
+          'appMessage',
+          `Timbratura ${pendingBadgeData.tipoTimbratura} con QR salvata correttamente.\nQR: ${qrText}\nLat: ${pendingBadgeData.latitudine}\nLon: ${pendingBadgeData.longitudine}\nAccuratezza: ${pendingBadgeData.accuratezza} metri`,
+          'success'
+          );
+          pendingBadgeData = null;
+          setButtonsDisabled(false);
+          return;
+        }
+        if (
+          data.message === 'Sessione scaduta' ||
+          data.message === 'Sessione non valida' ||
+          data.message === 'Sessione mancante' ||
+          data.message === 'Sessione non attiva'
+        ) {
+          forceLogoutWithMessage('Sessione scaduta. Effettua di nuovo il login.');
+          return;
+        }
+        showMessage(
+          'appMessage',
+          data.message || 'Errore salvataggio timbratura con QR.',
+          'error'
+        );
+        setButtonsDisabled(false);
+      })
+
+      .catch(error => {
+        console.error('ERRORE SAVE BADGE QR:', error);
+        showMessage(
+          'appMessage',
+          `Errore di salvataggio timbratura con QR.\nDettaglio: ${error.message}`,
+          'error'
+        );
+        setButtonsDisabled(false);
+        pendingBadgeData = null;
+      });
+    }
+
+    
+    function autoLoginIfPresent() {
+      const savedUser = localStorage.getItem('dorobadgeUser');
+      const savedToken = localStorage.getItem('dorobadgeSessionToken');
+
+      if (savedUser && savedToken) {
+        try {
+          currentUser = JSON.parse(savedUser);
+          showAppView();
+        } catch (e) {
+          localStorage.removeItem('dorobadgeUser');
+          localStorage.removeItem('dorobadgeSessionToken');
+        }
+      } else {
+        localStorage.removeItem('dorobadgeUser');
+        localStorage.removeItem('dorobadgeSessionToken');
+      }
+    }
+
+    autoLoginIfPresent();
+  </script>
+</body>
+</html>
