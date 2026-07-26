@@ -1,0 +1,25 @@
+{
+  "short_name": "DoroBadge_Admin",
+  "name": "DoroBadge",
+  "description": "Applicazione per la timbratura digitale della DoroMaris srl",
+  "icons": [
+    {
+      "src": "DoroBadge-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "DoroBadge-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/DoroBadge/",
+  "scope": "/DoroBadge/",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "display": "standalone",
+  "orientation": "portrait"
+}
