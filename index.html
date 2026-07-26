@@ -253,6 +253,96 @@
       resize: vertical;
     }
 
+    .admin-actions {
+      margin-bottom: 16px;
+    }
+    
+    .admin-list-box {
+      margin-top: 18px;
+    }
+    
+    .admin-section-title {
+      text-align: center;
+      margin-bottom: 14px;
+      color: #1f2937;
+    }
+    
+    .admin-employee-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      min-width: 14px;
+      border-radius: 50%;
+      margin-top: 5px;
+    }
+    
+    .status-verde {
+      background: #16a34a;
+    }
+    
+    .status-rosso {
+      background: #dc2626;
+    }
+    
+    .status-arancione {
+      background: #f59e0b;
+    }
+    
+    .admin-employee-content {
+      flex: 1;
+    }
+    
+    .admin-employee-name {
+      font-weight: bold;
+      font-size: 16px;
+      color: #111827;
+    }
+    
+    .admin-employee-username {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    
+    .admin-employee-status {
+      font-size: 14px;
+      margin-top: 6px;
+      font-weight: bold;
+    }
+    
+    .admin-employee-detail {
+      font-size: 13px;
+      color: #374151;
+      margin-top: 4px;
+    }
+    
+    .btn-refresh {
+      background: #0f766e;
+    }
+    
+    .btn-refresh:hover {
+      background: #115e59;
+    }
+    
+    .btn-admin-note {
+      background: #7c3aed;
+    }
+    
+    .btn-admin-note:hover {
+      background: #6d28d9;
+    }
+
+
   </style>
 
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -318,6 +408,36 @@
         La posizione GPS e' obbligatoria per ogni timbratura.
       </div>-->
     </div>
+
+    <div id="adminView" class="hidden">
+      <div class="brand brand-app">
+        <img src="DoroMaris_logo.png" alt="Logo azienda" class="logo">
+        <h2 class="title-app">DoroBadge Admin</h2>
+      </div>
+    
+      <div class="user-box" id="adminUserBox"></div>
+    
+      <div class="admin-actions">
+        <button class="btn-refresh" onclick="loadAdminDashboard()">Aggiorna riepilogo</button>
+      </div>
+    
+      <div id="adminMessage" class="message hidden"></div>
+    
+      <div class="admin-list-box">
+        <h3 class="admin-section-title">Dipendenti oggi</h3>
+        <div id="adminEmployeesList"></div>
+      </div>
+    
+      <div class="note-box">
+        <label for="adminSegnalazione">Segnalazioni admin</label>
+        <textarea id="adminSegnalazione" placeholder="Scrivi qui eventuali note operative..."></textarea>
+      </div>
+    
+      <button class="btn-admin-note" onclick="saveAdminSegnalazione()">Salva segnalazione</button>
+      <button class="btn-logout" onclick="logout()">Esci</button>
+    </div>
+
+    
   </div>
 
   <script>
@@ -350,6 +470,16 @@
       el.textContent = '';
     }
 
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    
     function togglePasswordCheckbox(checkbox) {
       const passwordInput = document.getElementById('password');
       passwordInput.type = checkbox.checked ? 'text' : 'password';
@@ -421,16 +551,41 @@
 
     function showAppView() {
       document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('appView').classList.add('hidden');
+      document.getElementById('adminView').classList.add('hidden');
+    
+      if (!currentUser || !currentUser.ruolo) {
+        showMessage('loginMessage', 'Ruolo utente non disponibile.', 'error');
+        return;
+      }
+    
+      if (currentUser.ruolo === 'ADMIN') {
+        document.getElementById('adminView').classList.remove('hidden');
+    
+        document.getElementById('adminUserBox').innerHTML = `
+          <strong>Admin:</strong> ${currentUser.nomeCompleto}<br>
+          <strong>Username:</strong> ${currentUser.username}<br>
+          <strong>ID:</strong> ${currentUser.idUtente}<br>
+          <strong>Ruolo:</strong> ${currentUser.ruolo}
+        `;
+    
+        hideMessage('adminMessage');
+        loadAdminDashboard();
+        return;
+      }
+    
       document.getElementById('appView').classList.remove('hidden');
-
+    
       document.getElementById('userBox').innerHTML = `
         <strong>Utente:</strong> ${currentUser.nomeCompleto}<br>
         <strong>Username:</strong> ${currentUser.username}<br>
-        <strong>ID:</strong> ${currentUser.idUtente}
+        <strong>ID:</strong> ${currentUser.idUtente}<br>
+        <strong>Ruolo:</strong> ${currentUser.ruolo}
       `;
-
+    
       hideMessage('appMessage');
     }
+
 
     function logout() {
       currentUser = null;
@@ -440,6 +595,7 @@
       stopQrScannerSilently();
 
       document.getElementById('appView').classList.add('hidden');
+      document.getElementById('adminView').classList.add('hidden');
       document.getElementById('loginView').classList.remove('hidden');
       document.getElementById('password').value = '';
 
@@ -872,7 +1028,6 @@
         pendingBadgeData = null;
       });
     }
-
     
     function autoLoginIfPresent() {
       const savedUser = localStorage.getItem('dorobadgeUser');
@@ -893,6 +1048,143 @@
     }
 
     autoLoginIfPresent();
+
+    function loadAdminDashboard() {
+      hideMessage('adminMessage');
+    
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'getAdminDashboard',
+          sessionToken: getSessionToken()
+        })
+      })
+      .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error('Risposta server non valida: ' + text);
+        }
+      })
+      .then(data => {
+        if (!data.success) {
+          if (
+            data.message === 'Sessione scaduta' ||
+            data.message === 'Sessione non valida' ||
+            data.message === 'Sessione mancante' ||
+            data.message === 'Sessione non attiva'
+          ) {
+            forceLogoutWithMessage('Sessione scaduta. Effettua di nuovo il login.');
+            return;
+          }
+    
+          showMessage('adminMessage', data.message || 'Errore caricamento dashboard admin.', 'error');
+          return;
+        }
+    
+        renderAdminEmployees(data.employees || []);
+      })
+      .catch(error => {
+        console.error('ERRORE DASHBOARD ADMIN:', error);
+        showMessage('adminMessage', `Errore caricamento dashboard admin.\nDettaglio: ${error.message}`, 'error');
+      });
+    }
+
+    function renderAdminEmployees(employees) {
+      const container = document.getElementById('adminEmployeesList');
+    
+      if (!employees || employees.length === 0) {
+        container.innerHTML = `
+          <div class="admin-employee-card">
+            <div class="admin-employee-content">
+              <div class="admin-employee-name">Nessun dipendente trovato</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+    
+      container.innerHTML = employees.map(emp => {
+        let statusClass = 'status-rosso';
+    
+        if (emp.colore === 'verde') statusClass = 'status-verde';
+        if (emp.colore === 'arancione') statusClass = 'status-arancione';
+    
+        return `
+          <div class="admin-employee-card">
+            <div class="status-dot ${statusClass}"></div>
+            <div class="admin-employee-content">
+              <div class="admin-employee-name">${escapeHtml(emp.nomeCompleto)}</div>
+              <div class="admin-employee-username">@${escapeHtml(emp.username)}</div>
+              <div class="admin-employee-status">${escapeHtml(emp.stato)}</div>
+              <div class="admin-employee-detail">${escapeHtml(emp.dettaglio)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function saveAdminSegnalazione() {
+      hideMessage('adminMessage');
+    
+      const textarea = document.getElementById('adminSegnalazione');
+      const testoSegnalazione = textarea.value.trim();
+    
+      if (!testoSegnalazione) {
+        showMessage('adminMessage', 'Scrivi una segnalazione prima di salvarla.', 'error');
+        return;
+      }
+    
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'saveAdminSegnalazione',
+          sessionToken: getSessionToken(),
+          testoSegnalazione: testoSegnalazione
+        })
+      })
+      .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error('Risposta server non valida: ' + text);
+        }
+      })
+      .then(data => {
+        if (!data.success) {
+          if (
+            data.message === 'Sessione scaduta' ||
+            data.message === 'Sessione non valida' ||
+            data.message === 'Sessione mancante' ||
+            data.message === 'Sessione non attiva'
+          ) {
+            forceLogoutWithMessage('Sessione scaduta. Effettua di nuovo il login.');
+            return;
+          }
+    
+          showMessage('adminMessage', data.message || 'Errore salvataggio segnalazione admin.', 'error');
+          return;
+        }
+    
+        textarea.value = '';
+        showMessage('adminMessage', 'Segnalazione admin salvata correttamente.', 'success');
+      })
+      .catch(error => {
+        console.error('ERRORE SEGNALAZIONE ADMIN:', error);
+        showMessage('adminMessage', `Errore salvataggio segnalazione admin.\nDettaglio: ${error.message}`, 'error');
+      });
+    }
+
   </script>
 </body>
 </html>
